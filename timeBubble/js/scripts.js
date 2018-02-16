@@ -650,5 +650,3 @@ function updateDate(selected){
 				break;
 	}
 }
-
-window.onresize = resetBubbles;
