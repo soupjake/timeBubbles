@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Time Bubble</title>
+    <title>Time Bubbles</title>
 	<link rel="stylesheet" href="css/styles.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -10,13 +10,14 @@
     <title>
         Bubble Menu
     </title>
-	<div id "gapDiv"></div>
-	<div id="mainBubble"><svg class="mainBubbleSVG"></svg></div>
-	<div class="range-slider">
-		<form>
-			<input type="range" min=1 max=6 step=1 id="date" value=1 autocomplete=off oninput="selected_date.value = date.value">
-			<p name="selected_date" id="selected_date">Date 1</p>
-		</form>
+	<div>
+		<div id="mainBubble"></div>
+		<div id="slider">
+			<form>
+				<input type="range" min=1 max=6 step=1 id="date" value=1 autocomplete=off oninput="selected_date.value = date.value">
+				<p name="selected_date" id="selected_date">Current</p>
+			</form>
+		</div>
 	</div>
 	<script src="js/d3.v4.min.js"></script>
     <script src="js/scripts.js"></script>
