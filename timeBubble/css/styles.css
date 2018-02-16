@@ -1,18 +1,18 @@
 #mainBubble {
      background: #fff;
      font: 10px sans-serif;
-	 position: relative;
+	 height: auto;
+	 text-align: center;
 }
- #mainBubble svg {
-     left: 0;
-     position: absolute;
-     top: 0;
+
+#slider{
+	text-align: center;
+    font-size: 2vw;
+    font-family: sans-serif;
+    color: #5C86C4;
 }
 
 input[type=range] {
-    display: block;
-	position:relative;
-    margin: auto;
     width: 20%;
 	-webkit-appearance: none;
 }
@@ -60,13 +60,4 @@ input[type=range]::-ms-thumb {
     width: 16px;
     border-radius: 50%;
 	background: #5C86C4;
-}
-
-#selected_date {
-    display: block;
-	position:relative;
-    text-align: center;
-    font-size: 2vw;
-    font-family: sans-serif;
-    color: #5C86C4;
 }
