@@ -280,27 +280,27 @@ function updateDate(selected){
 	switch(selected){
 		case 1:
 			d3.select("#selected_date")
-				.text("Current")
+				.text("Date 1")
 				break;
 		case 2:
 			d3.select("#selected_date")
-				.text("August 2018")
+				.text("Date 2")
 				break;
 		case 3:
 			d3.select("#selected_date")
-				.text("April 2019")
+				.text("Date 3")
 				break;
 		case 4:
 			d3.select("#selected_date")
-				.text("2019 - 2020")
+				.text("Date 4")
 				break;
 		case 5:
 			d3.select("#selected_date")
-				.text("2020 - 2021")
+				.text("Date 5")
 				break;
 		case 6:
 			d3.select("#selected_date")
-				.text("TBC")
+				.text("Date 6")
 				break;
 	}
 }
