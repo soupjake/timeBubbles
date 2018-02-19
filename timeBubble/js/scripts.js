@@ -37,11 +37,7 @@ var subcolors = ["#DAB4EF", "#FDB8B8", "#88F3CE", "#B4C8EF"];
 var slider = d3.select('#date');
 slider.on('change', function() {
 	dateSelected = this.value;
-	svg.selectAll(".childBubble").transition()
-		.duration(500)
-		.style("opacity", 0)
-		.remove();
-	svg.selectAll(".childBubbleText").remove();
+	svg.selectAll("g").remove();
 	updateDate(parseInt(dateSelected));
 	draw(dateSelected)
 });
@@ -63,9 +59,6 @@ function draw(date){
 
     bubbleObj.append("circle")
         .attr("class", "topBubble")
-        .attr("id", function(d, i) {
-            return "topBubble" + i;
-        })
         .attr("r", function(d) {
             return oR;
         })
@@ -108,11 +101,11 @@ function draw(date){
     for (var iB = 0; iB < nTop; iB++) {
         var childBubbles = svg.selectAll(".childBubble" + iB)
             .data(root.children[iB].children)
-            .enter().append("g");
+            .enter()
+			.append("g");
 
         childBubbles.append("circle")
-            .attr("class", "childBubble")
-            .attr("id", "childBubble" + iB)
+            .attr("class", "childBubble" + iB)
             .attr("r", function(d) {
                 return oR / 3.0;
             })
@@ -125,15 +118,11 @@ function draw(date){
 			.style("fill", function(d, i){
 				return subcolors[iB];
 			})
-			.style("opacity", 0)
-			.transition()
-			.duration(500)
 			.style("opacity", 0.5);
 
 						
 		childBubbles.append("text")
-            .attr("class", "childBubbleText")
-			.attr("id", "childBubbleText" + iB)
+			.attr("class", "childBubbleText" + iB)
             .attr("x", function(d, i) {
                 return (oR * (3 * (iB + 1) - 1) + oR * 1.5 * Math.cos((i - 2) * 45 / 180 * 3.1415926));
             })
@@ -181,7 +170,7 @@ resetBubbles = function() {
 		})
 
     for (var k = 0; k < nTop; k++) {
-        t.selectAll("#childBubbleText" + k)
+        t.selectAll(".childBubbleText" + k)
             .attr("x", function(d, i) {
                 return (oR * (3 * (k + 1) - 1) + oR * 1.5 * Math.cos((i - 2) * 45 / 180 * 3.1415926));
             })
@@ -191,7 +180,7 @@ resetBubbles = function() {
             .attr("font-size", 6)
             .style("opacity", 0);
 
-        t.selectAll("#childBubble" + k)
+        t.selectAll(".childBubble" + k)
             .attr("r", function(d) {
                 return oR / 3.0;
             })
@@ -256,7 +245,7 @@ function activateBubble(d, i) {
     for (var k = 0; k < nTop; k++) {
         signSide = 1;
         if (k < nTop / 2) signSide = 1;
-        t.selectAll("#childBubbleText" + k)
+        t.selectAll(".childBubbleText" + k)
 		
             .attr("x", function(d, i) {
                 return (oR * (3 * (k + 1) - 1) - 0.6 * oR * (k - 1) + signSide * oR * 2.5 * Math.cos((i - 2) * 45 / 180 * 3.1415926));
@@ -271,7 +260,7 @@ function activateBubble(d, i) {
                 return (k == i) ? 1 : 0;
             });
 
-        t.selectAll("#childBubble" + k)
+        t.selectAll(".childBubble" + k)
             .attr("cx", function(d, i) {
                 return (oR * (3 * (k + 1) - 1) - 0.6 * oR * (k - 1) + signSide * oR * 2.5 * Math.cos((i - 2) * 45 / 180 * 3.1415926));
             })
@@ -291,27 +280,27 @@ function updateDate(selected){
 	switch(selected){
 		case 1:
 			d3.select("#selected_date")
-				.text("Date 1")
+				.text("Current")
 				break;
 		case 2:
 			d3.select("#selected_date")
-				.text("Date 2")
+				.text("August 2018")
 				break;
 		case 3:
 			d3.select("#selected_date")
-				.text("Date 3")
+				.text("April 2019")
 				break;
 		case 4:
 			d3.select("#selected_date")
-				.text("Date 4")
+				.text("2019 - 2020")
 				break;
 		case 5:
 			d3.select("#selected_date")
-				.text("Date 5")
+				.text("2020 - 2021")
 				break;
 		case 6:
 			d3.select("#selected_date")
-				.text("Date 6")
+				.text("TBC")
 				break;
 	}
 }
