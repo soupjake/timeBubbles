@@ -37,8 +37,11 @@ var subcolors = ["#DAB4EF", "#FDB8B8", "#88F3CE", "#B4C8EF"];
 var slider = d3.select('#date');
 slider.on('change', function() {
 	dateSelected = this.value;
-	svg.selectAll(".childBubble").remove();
-	svg.selectAll(".childBubbleText").remove()
+	svg.selectAll(".childBubble").transition()
+		.duration(500)
+		.style("opacity", 0)
+		.remove();
+	svg.selectAll(".childBubbleText").remove();
 	updateDate(parseInt(dateSelected));
 	draw(dateSelected)
 });
@@ -50,10 +53,7 @@ function draw(date){
     var bubbleObj = svg.selectAll(".topBubble")
         .data(root.children)
         .enter()
-		.append("g")
-        .attr("id", function(d, i) {
-            return "topBubbleAndText_" + i
-        });
+		.append("g");
 
     console.log(root);
     nTop = root.children.length;
@@ -125,6 +125,9 @@ function draw(date){
 			.style("fill", function(d, i){
 				return subcolors[iB];
 			})
+			.style("opacity", 0)
+			.transition()
+			.duration(500)
 			.style("opacity", 0.5);
 
 						
@@ -288,27 +291,27 @@ function updateDate(selected){
 	switch(selected){
 		case 1:
 			d3.select("#selected_date")
-				.text("Current")
+				.text("Date 1")
 				break;
 		case 2:
 			d3.select("#selected_date")
-				.text("August 2018")
+				.text("Date 2")
 				break;
 		case 3:
 			d3.select("#selected_date")
-				.text("April 2019")
+				.text("Date 3")
 				break;
 		case 4:
 			d3.select("#selected_date")
-				.text("2019 - 2020")
+				.text("Date 4")
 				break;
 		case 5:
 			d3.select("#selected_date")
-				.text("2020 - 2021")
+				.text("Date 5")
 				break;
 		case 6:
 			d3.select("#selected_date")
-				.text("TBC")
+				.text("Date 6")
 				break;
 	}
 }
