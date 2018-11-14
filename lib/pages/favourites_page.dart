@@ -75,7 +75,8 @@ class FavouritesPageState extends State<FavouritesPage> {
             ),
           ])),
       Expanded(
-          child: ListView.builder(
+          child: Padding(padding: const EdgeInsets.only(top: 8.0), child: ListView.builder(
+
               itemCount: RecipeViewModel.favourites.length,
               itemBuilder: (context, index) {
                 if (filter == null || filter == "") {
@@ -89,7 +90,7 @@ class FavouritesPageState extends State<FavouritesPage> {
                     return new Container();
                   }
                 }
-              }))
+              })))
     ]));
   }
 
@@ -105,7 +106,7 @@ class FavouritesPageState extends State<FavouritesPage> {
               Row(children: <Widget>[
                 Icon(
                   Icons.schedule,
-                  color: Colors.black,
+                  color: Colors.black54,
                   size: 16.0,
                 ),
                 Text(" " +
@@ -114,7 +115,7 @@ class FavouritesPageState extends State<FavouritesPage> {
               Row(children: <Widget>[
                 Icon(
                   Icons.restaurant,
-                  color: Colors.black,
+                  color: Colors.black54,
                   size: 16.0,
                 ),
                 Text(
@@ -123,7 +124,7 @@ class FavouritesPageState extends State<FavouritesPage> {
               Row(children: <Widget>[
                 Icon(
                   Icons.grade,
-                  color: Colors.black,
+                  color: Colors.black54,
                   size: 16.0,
                 ),
                 Text(" " +
@@ -133,7 +134,7 @@ class FavouritesPageState extends State<FavouritesPage> {
               Row(children: <Widget>[
                 Icon(
                   Icons.thumb_up,
-                  color: Colors.black,
+                  color: Colors.black54,
                   size: 16.0,
                 ),
                 Text(" " +
