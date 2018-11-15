@@ -1,110 +1,160 @@
 import 'package:flutter/material.dart';
 import 'package:recipeapp/widgets/chips_tile.dart';
-import 'package:recipeapp/widgets/page_item.dart';
-import 'package:recipeapp/widgets/page_transformer.dart';
-import 'package:recipeapp/viewmodels/recipe_viewmodel.dart';
-import 'package:recipeapp/widgets/query_dialog.dart';
 
-class RecipesPage extends StatefulWidget {
+class QueryDialog extends StatefulWidget {
+  final List<String> ingredients;
+  final List<bool> diets;
+
+  QueryDialog({this.ingredients, this.diets});
+
   @override
-  State createState() => RecipesPageState();
+  State<StatefulWidget> createState() => QueryDialogState();
 }
 
-class RecipesPageState extends State<RecipesPage> {
-  List<String> ingredients;
+class QueryDialogState extends State<QueryDialog> {
+  List<String> original;
+  TextField ingredientField;
+  TextEditingController ingredientController = new TextEditingController();
+  bool vegan = false;
+  bool vegetarian = false;
+  bool diaryFree = false;
+  bool glutenFree = false;
 
   @override
   void initState() {
+    original = new List<String>.from(widget.ingredients);
+    ingredientField = new TextField(
+        controller: ingredientController,
+        decoration: InputDecoration(hintText: "Add ingredient..."));
+    for (int i = widget.ingredients.length - 1; i > 0; i--) {
+      switch (widget.ingredients[i]) {
+        case "vegan":
+          vegan = true;
+          widget.ingredients.removeAt(i);
+          break;
+        case "vegetarian":
+          vegetarian = true;
+          widget.ingredients.removeAt(i);
+          break;
+        case "diaryFree":
+          diaryFree = true;
+          widget.ingredients.removeAt(i);
+          break;
+        case "glutenFree":
+          glutenFree = true;
+          widget.ingredients.removeAt(i);
+          break;
+      }
+    }
     super.initState();
-    ingredients = new List<String>();
-    ingredients.add("chicken");
-    ingredients.add("pasta");
   }
 
   @override
   void dispose() {
-    ingredients.clear();
+    ingredientController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-        child: Column(children: <Widget>[
-      Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-            PopupMenuButton(
-              icon: Icon(Icons.sort),
-              itemBuilder: (context) => <PopupMenuItem>[
-                new PopupMenuItem<int>(
-                  child: Text("Time"), value: 0
-                ),
-                new PopupMenuItem<int>(
-                  child: Text("Servings"), value: 1
-                ),
-                new PopupMenuItem<int>(
-                  child: Text("Score"), value: 2
-                ),
-              ],
-              onSelected: (result) async {
-                switch(result){
-                  case 0:
-                    setState(() {
-                      RecipeViewModel.recipes.sort((a, b) => a.readyInMinutes.compareTo(b.readyInMinutes));
-                    });
-                    break;
-                  case 1:
-                    setState(() {
-                      RecipeViewModel.recipes.sort((a, b) => b.servings.compareTo(a.servings));
-                    });
-                    break;
-                  case 2:
-                    setState(() {
-                      RecipeViewModel.recipes.sort((a, b) => b.spoonacularScore.compareTo(a.spoonacularScore));
-                    });
-                    break;
-                }
-              },
-            ),
+    return SimpleDialog(
+      contentPadding: EdgeInsets.all(12.0),
+      children: <Widget>[
+        Row(
+          children: <Widget>[
             Expanded(
-                child: Container(
-                    decoration: const BoxDecoration(
-                        border: Border(
-                            bottom:
-                                BorderSide(width: 1.0, color: Colors.black54))),
-                    child: 
-                          ChipsTile(ingredients: ingredients, deletable: false,),
-                        )),
+                child: Theme(
+                    data: ThemeData(primaryColor: Colors.black54),
+                    child: ingredientField)),
             IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () async{ 
-                List<String> temp = await showDialog(
-                  context: context,
-                  builder: (context) { return QueryDialog(ingredients: ingredients);}
-                );
+              icon: Icon(Icons.add),
+              onPressed: () {
                 setState(() {
-                  if(temp != null){
-                    ingredients = temp;
+                  if (ingredientController.text.length > 0) {
+                    widget.ingredients.add(ingredientController.text);
+                    ingredientController.clear();
                   }
-              });
-              }),
-          ])),
-      Flexible(child: PageTransformer(
-        pageViewBuilder: (context, visibilityResolver) {
-          return PageView.builder(
-              controller: PageController(viewportFraction: 0.75),
-              itemCount: RecipeViewModel.recipes.length,
-              itemBuilder: (context, index) {
-                return PageItem(
-                    recipe: RecipeViewModel.recipes[index],
-                    pageVisibility:
-                        visibilityResolver.resolvePageVisibility(index));
-              });
-        },
-      ))
-    ]));
+                });
+              },
+            )
+          ],
+        ),
+        ChipsTile(
+          ingredients: widget.ingredients,
+          deletable: true,
+        ),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Text("Vegan      "),
+              Checkbox(
+                value: vegan,
+                onChanged: (value) {
+                  setState(() {
+                    vegan = value;
+                  });
+                },
+              ),
+              Text("Vegetarian"),
+              Checkbox(
+                value: vegetarian,
+                onChanged: (value) {
+                  setState(() {
+                    vegetarian = value;
+                  });
+                },
+              ),
+            ]),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Text("Diary Free"),
+              Checkbox(
+                value: diaryFree,
+                onChanged: (value) {
+                  setState(() {
+                    diaryFree = value;
+                  });
+                },
+              ),
+              Text("Gluten Free"),
+              Checkbox(
+                value: glutenFree,
+                onChanged: (value) {
+                  setState(() {
+                    glutenFree = value;
+                  });
+                },
+              ),
+            ]),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            FlatButton(
+                child: Text("Cancel"),
+                onPressed: () async {
+                  Navigator.of(context).pop(original);
+                }),
+            FlatButton(
+                child: Text("Accept"),
+                onPressed: () async {
+                  if (vegan) {
+                    widget.ingredients.add("vegan");
+                  }
+                  if (vegetarian) {
+                    widget.ingredients.add("vegetarian");
+                  }
+                  if (diaryFree) {
+                    widget.ingredients.add("diaryFree");
+                  }
+                  if (glutenFree) {
+                    widget.ingredients.add("glutenFree");
+                  }
+                  Navigator.of(context).pop(widget.ingredients);
+                })
+          ],
+        )
+      ],
+    );
   }
 }
