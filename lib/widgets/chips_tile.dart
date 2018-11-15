@@ -1,26 +1,43 @@
 import 'package:flutter/material.dart';
 
-class ChipsTile extends StatelessWidget {
+class ChipsTile extends StatefulWidget {
   final List<String> ingredients;
+  final bool deletable;
 
-  ChipsTile({this.ingredients});
+  ChipsTile({this.ingredients, this.deletable});
 
   @override
-  Widget build(BuildContext context) { 
+  State<StatefulWidget> createState() => ChipsTileState();
+}
+
+class ChipsTileState extends State<ChipsTile> {
+  @override
+  Widget build(BuildContext context) {
     final List<Widget> chips = <Widget>[];
-    if (ingredients.isNotEmpty) {
-      chips.add(Wrap(  
-        children: ingredients.map<Widget>((String name) {
+      chips.add(Wrap(
+          children: widget.ingredients.map<Widget>((String name) {
         return Padding(
           padding: const EdgeInsets.all(2.0),
-          child: Chip(label: Text(name)),
+          child: widget.deletable
+              ? Chip(
+                  label: Text(name),
+                  onDeleted: () {
+                    setState(() {
+                      widget.ingredients.remove(name);
+                    });
+                  },
+                )
+              : Chip(
+                  label: Text(name),
+                ),
         );
       }).toList()));
-    }
+    
 
     return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: chips,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: chips,
     );
   }
 }
