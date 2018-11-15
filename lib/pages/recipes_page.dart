@@ -3,6 +3,7 @@ import 'package:recipeapp/widgets/chips_tile.dart';
 import 'package:recipeapp/widgets/page_item.dart';
 import 'package:recipeapp/widgets/page_transformer.dart';
 import 'package:recipeapp/viewmodels/recipe_viewmodel.dart';
+import 'package:recipeapp/widgets/query_dialog.dart';
 
 class RecipesPage extends StatefulWidget {
   @override
@@ -32,7 +33,9 @@ class RecipesPageState extends State<RecipesPage> {
         child: Column(children: <Widget>[
       Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: Row(children: <Widget>[
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
             PopupMenuButton(
               icon: Icon(Icons.sort),
               itemBuilder: (context) => <PopupMenuItem>[
@@ -72,15 +75,22 @@ class RecipesPageState extends State<RecipesPage> {
                         border: Border(
                             bottom:
                                 BorderSide(width: 1.0, color: Colors.black54))),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          ChipsTile(ingredients: ingredients),
-                        ]))),
+                    child: 
+                          ChipsTile(ingredients: ingredients, deletable: false,),
+                        )),
             IconButton(
               icon: Icon(Icons.edit),
-              onPressed: () {},
-            ),
+              onPressed: () async{ 
+                List<String> temp = await showDialog(
+                  context: context,
+                  builder: (context) { return QueryDialog(ingredients: ingredients);}
+                );
+                setState(() {
+                  if(temp != null){
+                    ingredients = temp;
+                  }
+              });
+              }),
           ])),
       Flexible(child: PageTransformer(
         pageViewBuilder: (context, visibilityResolver) {
