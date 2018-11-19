@@ -30,7 +30,6 @@ class FavouritesPageState extends State<FavouritesPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        key: PageStorageKey<String>("FavouritesKey"),
         child: Column(children: <Widget>[
           Padding(
               padding: const EdgeInsets.only(top: 8.0),
