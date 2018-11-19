@@ -1,110 +1,157 @@
 import 'package:flutter/material.dart';
-import 'package:recipeapp/widgets/chips_tile.dart';
-import 'package:recipeapp/widgets/page_item.dart';
-import 'package:recipeapp/widgets/page_transformer.dart';
+import 'package:recipeapp/pages/recipe_page.dart';
 import 'package:recipeapp/viewmodels/recipe_viewmodel.dart';
-import 'package:recipeapp/widgets/query_dialog.dart';
 
-class RecipesPage extends StatefulWidget {
+class FavouritesPage extends StatefulWidget {
   @override
-  State createState() => RecipesPageState();
+  State createState() => FavouritesPageState();
 }
 
-class RecipesPageState extends State<RecipesPage> {
-  List<String> ingredients;
+class FavouritesPageState extends State<FavouritesPage> {
+  TextEditingController controller = new TextEditingController();
+  String filter;
 
   @override
   void initState() {
     super.initState();
-    ingredients = new List<String>();
-    ingredients.add("chicken");
-    ingredients.add("pasta");
+    controller.addListener(() {
+      setState(() {
+        filter = controller.text;
+      });
+    });
   }
 
   @override
   void dispose() {
-    ingredients.clear();
     super.dispose();
+    controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
+        key: PageStorageKey<String>("FavouritesKey"),
         child: Column(children: <Widget>[
-      Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Row(children: <Widget>[
+                PopupMenuButton(
+                  icon: Icon(Icons.sort),
+                  itemBuilder: (context) => <PopupMenuItem>[
+                        new PopupMenuItem<int>(child: Text("Time"), value: 0),
+                        new PopupMenuItem<int>(
+                            child: Text("Servings"), value: 1),
+                        new PopupMenuItem<int>(child: Text("Score"), value: 2),
+                      ],
+                  onSelected: (result) async {
+                    switch (result) {
+                      case 0:
+                        setState(() {
+                          RecipeViewModel.favourites.sort((a, b) =>
+                              a.readyInMinutes.compareTo(b.readyInMinutes));
+                        });
+                        break;
+                      case 1:
+                        setState(() {
+                          RecipeViewModel.favourites
+                              .sort((a, b) => b.servings.compareTo(a.servings));
+                        });
+                        break;
+                      case 2:
+                        setState(() {
+                          RecipeViewModel.favourites.sort((a, b) =>
+                              b.spoonacularScore.compareTo(a.spoonacularScore));
+                        });
+                        break;
+                    }
+                  },
+                ),
+                Expanded(
+                    child: Theme(
+                        data: ThemeData(primaryColor: Colors.black54),
+                        child: TextField(
+                          controller: controller,
+                          decoration: InputDecoration(hintText: "Search..."),
+                        ))),
+                IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {},
+                ),
+              ])),
+          Expanded(
+              child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: ListView.builder(
+                      itemCount: RecipeViewModel.favourites.length,
+                      itemBuilder: (context, index) {
+                        if (filter == null || filter == "") {
+                          return buildRow(index);
+                        } else {
+                          if (RecipeViewModel.favourites[index].title
+                              .toLowerCase()
+                              .contains(filter.toLowerCase())) {
+                            return buildRow(index);
+                          } else {
+                            return new Container();
+                          }
+                        }
+                      })))
+        ]));
+  }
+
+  Widget buildRow(int index) {
+    return Hero(
+        tag: RecipeViewModel.favourites[index].id.toString(),
+        child: Material(
+            child: ListTile(
+          title: Text(RecipeViewModel.favourites[index].title),
+          subtitle: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-            PopupMenuButton(
-              icon: Icon(Icons.sort),
-              itemBuilder: (context) => <PopupMenuItem>[
-                new PopupMenuItem<int>(
-                  child: Text("Time"), value: 0
+              Row(children: <Widget>[
+                Icon(
+                  Icons.schedule,
+                  color: Colors.black54,
+                  size: 16.0,
                 ),
-                new PopupMenuItem<int>(
-                  child: Text("Servings"), value: 1
+                Text(" " +
+                    RecipeViewModel.favourites[index].readyInMinutes.toString())
+              ]),
+              Row(children: <Widget>[
+                Icon(
+                  Icons.restaurant,
+                  color: Colors.black54,
+                  size: 16.0,
                 ),
-                new PopupMenuItem<int>(
-                  child: Text("Score"), value: 2
+                Text(
+                    " " + RecipeViewModel.favourites[index].servings.toString())
+              ]),
+              Row(children: <Widget>[
+                Icon(
+                  Icons.grade,
+                  color: Colors.black54,
+                  size: 16.0,
                 ),
-              ],
-              onSelected: (result) async {
-                switch(result){
-                  case 0:
-                    setState(() {
-                      RecipeViewModel.recipes.sort((a, b) => a.readyInMinutes.compareTo(b.readyInMinutes));
-                    });
-                    break;
-                  case 1:
-                    setState(() {
-                      RecipeViewModel.recipes.sort((a, b) => b.servings.compareTo(a.servings));
-                    });
-                    break;
-                  case 2:
-                    setState(() {
-                      RecipeViewModel.recipes.sort((a, b) => b.spoonacularScore.compareTo(a.spoonacularScore));
-                    });
-                    break;
-                }
-              },
-            ),
-            Expanded(
-                child: Container(
-                    decoration: const BoxDecoration(
-                        border: Border(
-                            bottom:
-                                BorderSide(width: 1.0, color: Colors.black54))),
-                    child: 
-                          ChipsTile(ingredients: ingredients, deletable: false,),
-                        )),
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () async{ 
-                List<String> temp = await showDialog(
-                  context: context,
-                  builder: (context) { return QueryDialog(ingredients: ingredients);}
-                );
-                setState(() {
-                  if(temp != null){
-                    ingredients = temp;
-                  }
-              });
-              }),
-          ])),
-      Flexible(child: PageTransformer(
-        pageViewBuilder: (context, visibilityResolver) {
-          return PageView.builder(
-              controller: PageController(viewportFraction: 0.75),
-              itemCount: RecipeViewModel.recipes.length,
-              itemBuilder: (context, index) {
-                return PageItem(
-                    recipe: RecipeViewModel.recipes[index],
-                    pageVisibility:
-                        visibilityResolver.resolvePageVisibility(index));
-              });
-        },
-      ))
-    ]));
+                Text(" " +
+                    RecipeViewModel.favourites[index].spoonacularScore
+                        .toString())
+              ]),
+              Row(children: <Widget>[
+                Icon(
+                  Icons.thumb_up,
+                  color: Colors.black54,
+                  size: 16.0,
+                ),
+                Text(" " +
+                    RecipeViewModel.favourites[index].aggregateLikes.toString())
+              ])
+            ],
+          ),
+          onTap: () async {
+            Navigator.push(context, MaterialPageRoute(builder: (_) {
+              return RecipePage(recipe: RecipeViewModel.favourites[index]);
+            }));
+          },
+        )));
   }
 }
