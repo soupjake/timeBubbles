@@ -30,7 +30,6 @@ class RecipesPageState extends State<RecipesPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        key: PageStorageKey<String>("RecipesKey"),
         child: Column(children: <Widget>[
           Padding(
               padding: const EdgeInsets.only(top: 8.0),
