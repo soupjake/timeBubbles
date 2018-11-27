@@ -12,13 +12,14 @@ class RecipesPage extends StatefulWidget {
 
 class RecipesPageState extends State<RecipesPage> {
   List<String> ingredients;
+  bool loaded;
 
   @override
   void initState() {
     super.initState();
+    loaded = true;
     ingredients = new List<String>();
     ingredients.add("chicken");
-    ingredients.add("pasta");
   }
 
   @override
@@ -29,13 +30,14 @@ class RecipesPageState extends State<RecipesPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Material(
         child: Column(children: <Widget>[
-          Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: <
-                      Widget>[
+      Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
                 PopupMenuButton(
                   icon: Icon(Icons.sort),
                   itemBuilder: (context) => <PopupMenuItem>[
@@ -87,23 +89,32 @@ class RecipesPageState extends State<RecipesPage> {
                           });
                       setState(() {
                         ingredients = temp;
-                        //do api stuff here
+                        loaded = false;
+                      });
+                      await RecipeViewModel.getResults(temp);
+                      setState(() {
+                        loaded = true;
                       });
                     }),
               ])),
-          Flexible(child: PageTransformer(
-            pageViewBuilder: (context, visibilityResolver) {
-              return PageView.builder(
-                  controller: PageController(viewportFraction: 0.75),
-                  itemCount: RecipeViewModel.recipes.length,
-                  itemBuilder: (context, index) {
-                    return PageItem(
-                        recipe: RecipeViewModel.recipes[index],
-                        pageVisibility:
-                            visibilityResolver.resolvePageVisibility(index));
-                  });
-            },
-          ))
-        ]));
+      Flexible(
+          child: loaded ? recipePages(context) : Center(child: CircularProgressIndicator())),
+    ]));
+  }
+
+  Widget recipePages(BuildContext context) {
+    return PageTransformer(
+      pageViewBuilder: (context, visibilityResolver) {
+        return PageView.builder(
+            controller: PageController(viewportFraction: 0.75),
+            itemCount: RecipeViewModel.recipes.length,
+            itemBuilder: (context, index) {
+              return PageItem(
+                  recipe: RecipeViewModel.recipes[index],
+                  pageVisibility:
+                      visibilityResolver.resolvePageVisibility(index));
+            });
+      },
+    );
   }
 }
