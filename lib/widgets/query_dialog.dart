@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:recipeapp/viewmodels/recipe_viewmodel.dart';
 import 'package:recipeapp/widgets/chips_tile.dart';
 
 class QueryDialog extends StatefulWidget {
   final List<String> ingredients;
-  final List<bool> diets;
 
-  QueryDialog({this.ingredients, this.diets});
+  QueryDialog({this.ingredients});
 
   @override
   State<StatefulWidget> createState() => QueryDialogState();
@@ -15,37 +15,13 @@ class QueryDialogState extends State<QueryDialog> {
   List<String> original;
   TextField ingredientField;
   TextEditingController ingredientController = new TextEditingController();
-  bool vegan = false;
-  bool vegetarian = false;
-  bool diaryFree = false;
-  bool glutenFree = false;
 
   @override
   void initState() {
     original = new List<String>.from(widget.ingredients);
     ingredientField = new TextField(
         controller: ingredientController,
-        decoration: InputDecoration(hintText: "Add ingredient..."));
-    for (int i = widget.ingredients.length - 1; i > 0; i--) {
-      switch (widget.ingredients[i]) {
-        case "vegan":
-          vegan = true;
-          widget.ingredients.removeAt(i);
-          break;
-        case "vegetarian":
-          vegetarian = true;
-          widget.ingredients.removeAt(i);
-          break;
-        case "diaryFree":
-          diaryFree = true;
-          widget.ingredients.removeAt(i);
-          break;
-        case "glutenFree":
-          glutenFree = true;
-          widget.ingredients.removeAt(i);
-          break;
-      }
-    }
+        decoration: InputDecoration(hintText: "Add ingredient"));
     super.initState();
   }
 
@@ -84,48 +60,24 @@ class QueryDialogState extends State<QueryDialog> {
           deletable: true,
         ),
         Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text("Vegan      "),
-              Checkbox(
-                value: vegan,
-                onChanged: (value) {
-                  setState(() {
-                    vegan = value;
-                  });
-                },
-              ),
-              Text("Vegetarian"),
-              Checkbox(
-                value: vegetarian,
-                onChanged: (value) {
-                  setState(() {
-                    vegetarian = value;
-                  });
-                },
-              ),
-            ]),
-        Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Text("Diary Free"),
-              Checkbox(
-                value: diaryFree,
-                onChanged: (value) {
-                  setState(() {
-                    diaryFree = value;
-                  });
-                },
-              ),
-              Text("Gluten Free"),
-              Checkbox(
-                value: glutenFree,
-                onChanged: (value) {
-                  setState(() {
-                    glutenFree = value;
-                  });
-                },
-              ),
+              Text("Number of results:", style: TextStyle(fontSize: 16.0),),
+              Padding(
+                  padding: EdgeInsets.only(right: 12.0),
+                  child: DropdownButton<int>(
+                      value: RecipeViewModel.resultAmount,
+                      items: <int>[5, 10, 15, 20, 25].map((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text(value.toString()),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          RecipeViewModel.resultAmount = value;
+                        });
+                      }))
             ]),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -138,18 +90,6 @@ class QueryDialogState extends State<QueryDialog> {
             FlatButton(
                 child: Text("Accept"),
                 onPressed: () async {
-                  if (vegan) {
-                    widget.ingredients.add("vegan");
-                  }
-                  if (vegetarian) {
-                    widget.ingredients.add("vegetarian");
-                  }
-                  if (diaryFree) {
-                    widget.ingredients.add("diaryFree");
-                  }
-                  if (glutenFree) {
-                    widget.ingredients.add("glutenFree");
-                  }
                   Navigator.of(context).pop(widget.ingredients);
                 })
           ],
