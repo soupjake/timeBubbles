@@ -11,9 +11,12 @@ class RecipeViewModel {
   static List<Recipe> favourites = new List<Recipe>();
   static Map<String, String> headers = new Map<String, String>();
   static String joiner = "%2C";
+  static int resultAmount = 15;
 
   static Future load() async {
     //API KEY GOES HERE
+    // headers['X-Mashape-Key'] =
+    //     "APCKI9ARjmmshzX168x5s32cctNmp1thJanjsnb5V4MhlZBnCV";
     headers['X-Mashape-Key'] =
         "test";
     headers['Accept'] = "application/json";
@@ -85,7 +88,7 @@ class RecipeViewModel {
       var resultsResponse = await http.get(
           "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients?fillIngredients=false&ingredients=" +
               queries +
-              "&limitLicense=false&number=10&ranking=1",
+              "&limitLicense=true&number=" + resultAmount.toString() + "&ranking=2",
           headers: headers);
       if (resultsResponse.statusCode == 200) {
         List resultsJson = json.decode(resultsResponse.body);
