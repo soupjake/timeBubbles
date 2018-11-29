@@ -140,19 +140,6 @@ class RecipePageState extends State<RecipePage> {
                             ]),
                             Row(children: <Widget>[
                               Icon(
-                                Icons.grade,
-                                color: Colors.black,
-                                size: 16.0,
-                              ),
-                              Text(
-                                  " " + widget.recipe.spoonacularScore.toString(),
-                                  style: textTheme.caption.copyWith(
-                                    color: Colors.black,
-                                    fontSize: 16.0,
-                                  ))
-                            ]),
-                            Row(children: <Widget>[
-                              Icon(
                                 Icons.thumb_up,
                                 color: Colors.black,
                                 size: 16.0,
@@ -163,7 +150,20 @@ class RecipePageState extends State<RecipePage> {
                                     color: Colors.black,
                                     fontSize: 16.0,
                                   ))
-                            ])
+                            ]),
+                            Row(children: <Widget>[
+                              Icon(
+                                Icons.grade,
+                                color: Colors.black,
+                                size: 16.0,
+                              ),
+                              Text(
+                                  " " + widget.recipe.spoonacularScore.round().toString(),
+                                  style: textTheme.caption.copyWith(
+                                    color: Colors.black,
+                                    fontSize: 16.0,
+                                  ))
+                            ]),
                           ],
                         ),
                       ),
