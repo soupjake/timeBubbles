@@ -82,11 +82,11 @@ class PageItem extends StatelessWidget {
                 )),
             Padding(padding: const EdgeInsets.only(right: 12.0, left: 12.0)),
             Icon(
-              Icons.grade,
+              Icons.thumb_up,
               color: Colors.white70,
               size: 16.0,
             ),
-            Text(" " + recipe.spoonacularScore.toString(),
+            Text(" " + recipe.aggregateLikes.toString(),
                 style: textTheme.caption.copyWith(
                   color: Colors.white70,
                   fontSize: 16.0,
@@ -136,7 +136,7 @@ class PageItem extends StatelessWidget {
       ),
     );
 
-    return GestureDetector(
+    return InkWell(
       child: Hero(tag: recipe.id.toString(), child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: 12.0,
